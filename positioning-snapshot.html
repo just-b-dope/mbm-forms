@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Positioning Snapshot — Matte Black Media</title>
+  <meta name="description" content="Let's see if we're a fit. Takes 5–10 minutes."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f4f0;
+      --accent: #c8b89a;
+      --accent-dark: #a89070;
+      --surface: #141414;
+      --surface2: #1e1e1e;
+      --border: rgba(200,184,154,0.18);
+      --muted: #666;
+      --text: #e8e6e0;
+      --text-sec: #999;
+      --error: #e05050;
+      --success: #3dba7a;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 56px 24px 100px;
+    }
+
+    .header { margin-bottom: 48px; }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .brand-name {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .form-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .form-title {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .form-sub {
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    .progress-bar {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 44px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .field {
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .field.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .field-label {
+      display: block;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--text-sec);
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,184,154,0.08);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+
+    select option { background: var(--surface2); }
+
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .revenue-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .revenue-card:hover { border-color: var(--accent-dark); }
+    .revenue-card.selected { border-color: var(--accent); background: rgba(200,184,154,0.06); }
+    .revenue-card input { display: none; }
+    .revenue-card .card-label { font-size: 13px; font-weight: 500; color: var(--text); display: block; margin-bottom: 3px; }
+    .revenue-card .card-sub { font-size: 11px; color: var(--text-sec); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 7px 13px;
+      font-size: 13px;
+      color: var(--text-sec);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .chip:hover { border-color: var(--accent-dark); color: var(--text); }
+    .chip.selected { border-color: var(--accent); color: var(--accent); background: rgba(200,184,154,0.06); }
+
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 40px 0 30px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .section-divider.visible { opacity: 1; }
+
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+
+    .divider-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .cta-row {
+      margin-top: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .cta-row.visible { opacity: 1; }
+
+    .btn-submit {
+      background: var(--accent);
+      color: var(--black);
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px 30px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover { background: var(--accent-dark); }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .submit-note { font-size: 12px; color: var(--text-sec); line-height: 1.6; }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .sending-overlay {
+      display: none;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .sending-title { font-size: 20px; font-weight: 500; color: var(--white); margin-bottom: 32px; }
+
+    .sending-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .send-step { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-sec); }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.3s; }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done { background: var(--success); }
+    .send-step.active-step { color: var(--text); }
+
+    .success-screen { display: none; text-align: center; padding: 80px 0; }
+
+    .success-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(61,186,122,0.12);
+      border: 1px solid rgba(61,186,122,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 22px;
+    }
+
+    .success-title { font-size: 24px; font-weight: 500; color: var(--white); margin-bottom: 12px; letter-spacing: -0.02em; }
+    .success-sub { font-size: 14px; color: var(--text-sec); max-width: 360px; margin: 0 auto 36px; line-height: 1.8; }
+
+    .delivery-status { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+
+    .delivery-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 11px 16px;
+    }
+
+    .delivery-label { color: var(--text-sec); flex: 1; text-align: left; }
+
+    .delivery-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-ok { background: rgba(61,186,122,0.12); color: var(--success); }
+    .badge-err { background: rgba(224,80,80,0.12); color: var(--error); }
+
+    .summary-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+    }
+
+    .summary-row { display: flex; gap: 12px; border-bottom: 1px solid var(--border); padding: 9px 0; }
+    .summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .summary-key {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      width: 130px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .summary-val { color: var(--text); font-size: 13px; line-height: 1.6; }
+
+    .copy-btn {
+      margin-top: 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-sec);
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .field-error { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+    .field.has-error input,
+    .field.has-error textarea,
+    .field.has-error select { border-color: var(--error); }
+    .field.has-error .field-error { display: block; }
+
+    @media (max-width: 520px) {
+      .form-title { font-size: 22px; }
+      .revenue-grid { grid-template-columns: 1fr; }
+      .cta-row { flex-direction: column; align-items: flex-start; }
+      .shell { padding: 40px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="header">
+    <div class="brand-mark">
+      <div class="brand-dot"></div>
+      <span class="brand-name">Matte Black Media</span>
+    </div>
+    <div class="form-eyebrow">Form 1 · Positioning Snapshot</div>
+    <h1 class="form-title">Let's see if we're a fit.</h1>
+    <p class="form-sub">Takes about 5–10 minutes. Answer honestly — this helps us understand where you are and where you want to go.</p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+  <div id="form-body">
+
+    <div class="section-divider visible"><div class="divider-line"></div><span class="divider-label">About you</span><div class="divider-line"></div></div>
+
+    <div class="field" id="f-name">
+      <label class="field-label" for="name">Your name</label>
+      <input type="text" id="name" placeholder="First and last name" autocomplete="name"/>
+      <div class="field-error">This field is required.</div>
+    </div>
+
+    <div class="field" id="f-what">
+      <label class="field-label" for="what">What do you do?</label>
+      <p class="field-hint">Your role, your business, or both — be specific.</p>
+      <textarea id="what" placeholder="e.g. I run a personal training brand and sell 1-on-1 coaching to athletes..."></textarea>
+      <div class="field-error">This field is required.</div>
+    </div>
+
+    <div class="field" id="f-who">
+      <label class="field-label" for="who">Who do you serve?</label>
+      <p class="field-hint">Describe your ideal client as specifically as possible.</p>
+      <textarea id="who" placeholder="e.g. Ambitious professionals in their 30s who want to transform their body without giving up their lifestyle..."></textarea>
+      <div class="field-error">This field is required.</div>
+    </div>
+
+    <div class="section-divider"><div class="divider-line"></div><span class="divider-label">Business</span><div class="divider-line"></div></div>
+
+    <div class="field" id="f-challenge">
+      <label class="field-label" for="challenge">What is your biggest business challenge right now?</label>
+      <p class="field-hint">Be direct. There are no wrong answers here.</p>
+      <textarea id="challenge" placeholder="e.g. I have clients but I struggle to consistently attract new ones. My content isn't converting..."></textarea>
+      <div class="field-error">This field is required.</div>
+    </div>
+
+    <div class="field" id="f-revenue">
+      <label class="field-label">Current annual revenue</label>
+      <p class="field-hint">This helps us understand where to meet you.</p>
+      <div class="revenue-grid">
+        <label class="revenue-card" onclick="selectRevenue(this,'pre-revenue')">
+          <input type="radio" name="revenue" value="pre-revenue"/>
+          <span class="card-label">Pre-revenue</span>
+          <span class="card-sub">Building toward first client</span>
+        </label>
+        <label class="revenue-card" onclick="selectRevenue(this,'under-50k')">
+          <input type="radio" name="revenue" value="under-50k"/>
+          <span class="card-label">Under $50K</span>
+          <span class="card-sub">Early traction</span>
+        </label>
+        <label class="revenue-card" onclick="selectRevenue(this,'50k-150k')">
+          <input type="radio" name="revenue" value="50k-150k"/>
+          <span class="card-label">$50K – $150K</span>
+          <span class="card-sub">Growing, need systems</span>
+        </label>
+        <label class="revenue-card" onclick="selectRevenue(this,'150k-plus')">
+          <input type="radio" name="revenue" value="150k-plus"/>
+          <span class="card-label">$150K+</span>
+          <span class="card-sub">Scaling</span>
+        </label>
+      </div>
+      <div class="field-error" id="revenue-error" style="display:none">Please select a revenue range.</div>
+    </div>
+
+    <div class="field" id="f-goal">
+      <label class="field-label" for="goal">Revenue goal for the next 12 months?</label>
+      <input type="text" id="goal" placeholder="e.g. $250K, hit 7 figures, double what I'm doing now..."/>
+      <div class="field-error">This field is required.</div>
+    </div>
+
+    <div class="section-divider"><div class="divider-line"></div><span class="divider-label">What you've tried</span><div class="divider-line"></div></div>
+
+    <div class="field" id="f-tried">
+      <label class="field-label">What have you already tried to solve your challenge?</label>
+      <p class="field-hint">Select everything that applies.</p>
+      <div class="chips">
+        <div class="chip" onclick="toggleChip(this,'Courses or programs')">Courses or programs</div>
+        <div class="chip" onclick="toggleChip(this,'Hired a coach')">Hired a coach</div>
+        <div class="chip" onclick="toggleChip(this,'Paid ads')">Paid ads</div>
+        <div class="chip" onclick="toggleChip(this,'Content creation')">Content creation</div>
+        <div class="chip" onclick="toggleChip(this,'Rebranding')">Rebranding</div>
+        <div class="chip" onclick="toggleChip(this,'Hired an agency')">Hired an agency</div>
+        <div class="chip" onclick="toggleChip(this,'Built a website')">Built a website</div>
+        <div class="chip" onclick="toggleChip(this,'Email marketing')">Email marketing</div>
+        <div class="chip" onclick="toggleChip(this,'Networking / events')">Networking / events</div>
+        <div class="chip" onclick="toggleChip(this,'Nothing yet')">Nothing yet</div>
+      </div>
+    </div>
+
+    <div class="field" id="f-tried-detail">
+      <label class="field-label" for="tried-detail">Anything else — or why past attempts didn't stick?</label>
+      <textarea id="tried-detail" placeholder="Optional — but the more context, the better we can help..."></textarea>
+    </div>
+
+    <div class="section-divider"><div class="divider-line"></div><span class="divider-label">Online presence</span><div class="divider-line"></div></div>
+
+    <div class="field" id="f-website">
+      <label class="field-label" for="website">Website</label>
+      <input type="url" id="website" placeholder="https://yoursite.com"/>
+    </div>
+
+    <div class="field" id="f-social">
+      <label class="field-label" for="social">Primary social media handle</label>
+      <p class="field-hint">Where are you most active?</p>
+      <input type="text" id="social" placeholder="e.g. @yourhandle on Instagram"/>
+    </div>
+
+    <div class="field" id="f-how">
+      <label class="field-label" for="how">How did you hear about Matte Black Media?</label>
+      <select id="how">
+        <option value="" disabled selected>Select one</option>
+        <option value="Instagram">Instagram</option>
+        <option value="TikTok">TikTok</option>
+        <option value="YouTube">YouTube</option>
+        <option value="Referral">Referral</option>
+        <option value="Podcast">Podcast</option>
+        <option value="Google">Google</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="cta-row" id="cta-row">
+      <button class="btn-submit" id="submit-btn" onclick="submitForm()">
+        <span id="btn-text">Submit snapshot →</span>
+        <span class="spinner" id="btn-spinner"></span>
+      </button>
+      <p class="submit-note">We review every submission personally.<br>You'll hear back within 48 hours.</p>
+    </div>
+
+  </div>
+
+  <!-- Sending overlay -->
+  <div class="sending-overlay" id="sending-overlay">
+    <div class="sending-title">Sending your snapshot…</div>
+    <div class="sending-steps">
+      <div class="send-step" id="step-email"><div class="step-dot" id="dot-email"></div><span>Emailing to Matte Black Media</span></div>
+      <div class="send-step" id="step-sheet"><div class="step-dot" id="dot-sheet"></div><span>Logging to lead spreadsheet</span></div>
+      <div class="send-step" id="step-done"><div class="step-dot" id="dot-done"></div><span>All done</span></div>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">You're in the queue.</h2>
+    <p class="success-sub">We review every submission personally. If there's a fit, you'll hear back within 48 hours about next steps.</p>
+    <div class="delivery-status" id="delivery-status"></div>
+    <div class="summary-block" id="summary-block"></div>
+    <button class="copy-btn" onclick="copyToClipboard()">Copy for Claude analysis →</button>
+  </div>
+
+</div>
+
+<script>
+  const TO_EMAIL = 'videliams@gmail.com';
+  const SHEET_ID = '1vlPZy36lDRHO9KFMmWcFheMDOgcjL39kejy5bs7eJdI';
+
+  const selectedChips = new Set();
+  let selectedRevenue = '';
+
+  function selectRevenue(el, val) {
+    document.querySelectorAll('.revenue-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedRevenue = val;
+    document.getElementById('revenue-error').style.display = 'none';
+    updateProgress();
+  }
+
+  function toggleChip(el, val) {
+    if (selectedChips.has(val)) { selectedChips.delete(val); el.classList.remove('selected'); }
+    else { selectedChips.add(val); el.classList.add('selected'); }
+  }
+
+  function updateProgress() {
+    const fields = ['name','what','who','challenge','goal'];
+    let filled = fields.filter(id => document.getElementById(id)?.value?.trim()).length;
+    if (selectedRevenue) filled++;
+    document.getElementById('progress').style.width = Math.round((filled / (fields.length + 1)) * 100) + '%';
+  }
+
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+  });
+
+  function collectData() {
+    const revenueMap = { 'pre-revenue':'Pre-revenue','under-50k':'Under $50K','50k-150k':'$50K – $150K','150k-plus':'$150K+' };
+    return {
+      name: document.getElementById('name').value.trim(),
+      what: document.getElementById('what').value.trim(),
+      who: document.getElementById('who').value.trim(),
+      challenge: document.getElementById('challenge').value.trim(),
+      revenue: revenueMap[selectedRevenue] || '',
+      goal: document.getElementById('goal').value.trim(),
+      tried: [...selectedChips].join(', ') || 'Nothing specified',
+      triedDetail: document.getElementById('tried-detail').value.trim() || '—',
+      website: document.getElementById('website').value.trim() || '—',
+      social: document.getElementById('social').value.trim() || '—',
+      how: document.getElementById('how').value || '—',
+      submittedAt: new Date().toLocaleString('en-US', { dateStyle:'medium', timeStyle:'short' }),
+    };
+  }
+
+  function validate() {
+    let valid = true;
+    [['f-name','name'],['f-what','what'],['f-who','who'],['f-challenge','challenge'],['f-goal','goal']].forEach(([fid,iid]) => {
+      const fieldEl = document.getElementById(fid);
+      if (!document.getElementById(iid)?.value?.trim()) { fieldEl.classList.add('has-error'); valid = false; }
+      else fieldEl.classList.remove('has-error');
+    });
+    if (!selectedRevenue) { document.getElementById('revenue-error').style.display = 'block'; valid = false; }
+    if (!valid) document.querySelector('.field.has-error')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return valid;
+  }
+
+  function setStep(id, state) {
+    const dot = document.getElementById('dot-' + id);
+    const step = document.getElementById('step-' + id);
+    if (state === 'active') { dot.className = 'step-dot active'; step.classList.add('active-step'); }
+    else if (state === 'done') { dot.className = 'step-dot done'; }
+    else if (state === 'error') { dot.style.background = '#e05050'; }
+  }
+
+  async function sendEmail(data) {
+    const subject = `New lead: ${data.name} — Positioning Snapshot`;
+    const body = `New Positioning Snapshot submission\n\nName: ${data.name}\nSubmitted: ${data.submittedAt}\n\nWHAT THEY DO\n${data.what}\n\nWHO THEY SERVE\n${data.who}\n\nBIGGEST CHALLENGE\n${data.challenge}\n\nREVENUE\nCurrent: ${data.revenue}\nGoal: ${data.goal}\n\nALREADY TRIED\n${data.tried}${data.triedDetail !== '—' ? '\n\nAdditional context: ' + data.triedDetail : ''}\n\nONLINE PRESENCE\nWebsite: ${data.website}\nSocial: ${data.social}\nSource: ${data.how}\n\n---\nCLAUDE PROMPT\n\nAnalyze this lead using the DOPE Method. Identify key gaps in their identity, positioning, messaging, offers, and visibility. Assess whether they are a strong fit for the Brand Alignment Audit. Flag any red flags or tire-kicker signals. End with a 3-sentence recommendation.`;
+
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        mcp_servers: [{ type: "url", url: "https://gmailmcp.googleapis.com/mcp/v1", name: "gmail" }],
+        messages: [{ role: "user", content: `Send an email using Gmail:\nTo: ${TO_EMAIL}\nSubject: ${subject}\nBody: ${body}\n\nSend it now.` }]
+      })
+    });
+    if (!res.ok) throw new Error('Gmail error');
+    return true;
+  }
+
+  async function logToSheet(data) {
+    const row = [data.submittedAt, data.name, data.what, data.who, data.challenge, data.revenue, data.goal, data.tried, data.triedDetail, data.website, data.social, data.how];
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        mcp_servers: [{ type: "url", url: "https://drivemcp.googleapis.com/mcp/v1", name: "drive" }],
+        messages: [{ role: "user", content: `Append a row to Google Sheet ID "${SHEET_ID}" on sheet 1.\n\nIf the sheet is empty, first add this header row:\nDate Submitted | Name | What They Do | Who They Serve | Biggest Challenge | Current Revenue | Revenue Goal | Already Tried | Additional Context | Website | Social | Source\n\nThen append this data row: ${JSON.stringify(row)}\n\nDo it now.` }]
+      })
+    });
+    if (!res.ok) throw new Error('Sheets error');
+    return true;
+  }
+
+  async function submitForm() {
+    if (!validate()) return;
+    const data = collectData();
+    window._formData = data;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    document.getElementById('btn-spinner').style.display = 'block';
+    document.getElementById('btn-text').textContent = 'Sending…';
+    document.getElementById('form-body').style.display = 'none';
+    document.getElementById('sending-overlay').style.display = 'block';
+
+    let emailOk = false, sheetOk = false;
+
+    setStep('email', 'active');
+    await new Promise(r => setTimeout(r, 500));
+    try { await sendEmail(data); emailOk = true; } catch(e) { emailOk = false; }
+    setStep('email', emailOk ? 'done' : 'error');
+    await new Promise(r => setTimeout(r, 400));
+
+    setStep('sheet', 'active');
+    await new Promise(r => setTimeout(r, 500));
+    try { await logToSheet(data); sheetOk = true; } catch(e) { sheetOk = false; }
+    setStep('sheet', sheetOk ? 'done' : 'error');
+    await new Promise(r => setTimeout(r, 400));
+
+    setStep('done', 'done');
+    await new Promise(r => setTimeout(r, 600));
+
+    document.getElementById('sending-overlay').style.display = 'none';
+
+    document.getElementById('delivery-status').innerHTML = `
+      <div class="delivery-row">
+        <span class="delivery-label">Email → ${TO_EMAIL}</span>
+        <span class="delivery-badge ${emailOk ? 'badge-ok' : 'badge-err'}">${emailOk ? 'SENT' : 'FAILED'}</span>
+      </div>
+      <div class="delivery-row">
+        <span class="delivery-label">Lead spreadsheet log</span>
+        <span class="delivery-badge ${sheetOk ? 'badge-ok' : 'badge-err'}">${sheetOk ? 'LOGGED' : 'FAILED'}</span>
+      </div>`;
+
+    document.getElementById('summary-block').innerHTML = [
+      ['Name', data.name],['What they do', data.what],['Who they serve', data.who],
+      ['Biggest challenge', data.challenge],['Current revenue', data.revenue],
+      ['Revenue goal', data.goal],['Already tried', data.tried],
+      ['Context', data.triedDetail],['Website', data.website],
+      ['Social', data.social],['Source', data.how],
+    ].map(([k,v]) => `<div class="summary-row"><span class="summary-key">${k}</span><span class="summary-val">${v}</span></div>`).join('');
+
+    document.getElementById('success-screen').style.display = 'block';
+  }
+
+  function copyToClipboard() {
+    const d = window._formData;
+    if (!d) return;
+    const text = `POSITIONING SNAPSHOT — ${d.name}\nSubmitted: ${d.submittedAt}\n\nWhat they do: ${d.what}\nWho they serve: ${d.who}\nBiggest challenge: ${d.challenge}\nCurrent revenue: ${d.revenue}\nRevenue goal: ${d.goal}\nAlready tried: ${d.tried}\nAdditional context: ${d.triedDetail}\nWebsite: ${d.website}\nSocial: ${d.social}\nSource: ${d.how}\n\n---\nAnalyze this lead using the DOPE Method. Identify key gaps in their identity, positioning, messaging, offers, and visibility. Assess whether they are a strong fit for the Brand Alignment Audit. Flag any red flags or tire-kicker signals. End with a 3-sentence recommendation.`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => btn.textContent = 'Copy for Claude analysis →', 2000);
+    });
+  }
+
+  // Staggered field reveal on scroll
+  const els = document.querySelectorAll('.field, .section-divider');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  els.forEach((f, i) => setTimeout(() => obs.observe(f), i * 40));
+  setTimeout(() => document.getElementById('cta-row').classList.add('visible'), 900);
+</script>
+</body>
+</html>
